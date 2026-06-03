@@ -1,6 +1,7 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne } from 'typeorm';
 import { AbstractEntity } from './base.entity';
 import * as bcrypt from 'bcrypt';
+import { MenteeProfile } from './mentee-profile.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -42,6 +43,9 @@ export class User extends AbstractEntity {
 
   @Column({ default: true })
   is_active: boolean;
+
+  @OneToOne(() => MenteeProfile, (menteeProfile) => menteeProfile.user)
+  menteeProfile: MenteeProfile;
 
   @BeforeInsert()
   @BeforeUpdate()

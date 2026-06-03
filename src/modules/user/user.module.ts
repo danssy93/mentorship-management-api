@@ -8,5 +8,6 @@ import { UserRepository } from 'src/database/repositories';
   imports: [DatabaseModule.forFeature()],
   controllers: [UserController],
   providers: [UserService, UserRepository],
+  exports: [UserService],
 })
 export class UserModule {}

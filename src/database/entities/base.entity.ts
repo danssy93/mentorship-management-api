@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 export abstract class AbstractEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @CreateDateColumn({ type: 'timestamp', precision: 6 })

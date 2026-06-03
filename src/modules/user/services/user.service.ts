@@ -12,6 +12,14 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async create(user: Partial<User>): Promise<User> {
+    const existingUser = await this.userRepository.findOne({
+      email: user.email,
+      phone: user.phone
+    })
+    if (existingUser) {
+      throw new AppError('User already exists', HttpStatus.CONFLICT);
+    }
+    
     return await this.userRepository.create(user);
   }
 
