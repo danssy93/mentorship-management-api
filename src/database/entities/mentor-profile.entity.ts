@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
 import { AbstractEntity } from './base.entity';
 import { User } from './users.entity';
+import { Skill } from './skill.entity';
 
 @Entity('mentor_profiles')
 export class MentorProfile extends AbstractEntity {
@@ -25,4 +26,11 @@ export class MentorProfile extends AbstractEntity {
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
+
+  @ManyToMany(() => Skill, (skill) => skill.mentees, { eager: true })
+  @JoinColumn({
+    // name: 'mentee_profile_skills',
+    // joinColumn: { name: 'mentee_profile_id', ref },
+  })
+  skills: Skill[];
 }

@@ -60,6 +60,10 @@ export class User extends AbstractEntity {
     }
   }
 
+  async comparePassword(plainPassword: string): Promise<boolean> {
+    return await bcrypt.compare(plainPassword, this.password);
+  }
+
   toPayload(): Partial<User> {
     return {
       id: this.id,

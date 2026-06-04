@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
 import { AbstractEntity } from './base.entity';
 import { User } from './users.entity';
+import { Skill } from './skill.entity';
 
 export enum ExperienceLevel {
   BEGINNER = 'beginner',
@@ -25,13 +26,13 @@ export class MenteeProfile extends AbstractEntity {
   @Column({ type: 'boolean', default: true })
   isLookingForMentor: boolean;
 
-  @Column({ type: 'jsonb' })
-  preferred_schedule: { days: string[]; times: string[] };
+  // @Column({ type: 'jsonb' })
+  // preferred_schedule: { days: string[]; times: string[] };
 
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 
-  //   @ManyToMany(() => Skill)
-  //   desiredSkills: Skill[];
+  @ManyToMany(() => Skill, (skill) => skill.mentees, { eager: true })
+  desiredSkills: Skill[];
 }

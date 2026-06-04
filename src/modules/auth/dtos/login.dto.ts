@@ -22,3 +22,7 @@ export class LoginDto {
   @IsString({ message: 'Password must be a string' })
   readonly password: string;
 }
+
+export class RefreshTokenDto {
+  refresh_token: string;
+}
