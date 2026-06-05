@@ -1,7 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './datasources';
-import { User } from './entities';
+import { Skill, User } from './entities';
 
 @Module({
   imports: [
@@ -22,6 +22,6 @@ import { User } from './entities';
 })
 export class DatabaseModule {
   static forFeature() {
-    return TypeOrmModule.forFeature([User]);
+    return TypeOrmModule.forFeature([User, Skill]);
   }
 }

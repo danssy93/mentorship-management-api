@@ -1,0 +1,10 @@
+[
+  { "name": "TypeScript", "category": "ENGINEERING" },
+  { "name": "System Design", "category": "ENGINEERING" },
+  { "name": "NestJS", "category": "ENGINEERING" },
+  { "name": "React", "category": "ENGINEERING" },
+  { "name": "PostgreSQL", "category": "DATA" },
+  { "name": "Product Strategy", "category": "PRODUCT" },
+  { "name": "UI/UX Design", "category": "DESIGN" },
+  { "name": "Leadership", "category": "LEADERSHIP" }
+]
