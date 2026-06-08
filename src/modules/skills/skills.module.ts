@@ -8,5 +8,6 @@ import { DatabaseModule } from 'src/database/database.module';
   imports: [DatabaseModule.forFeature()],
   providers: [SkillsService, SkillsRepository],
   controllers: [SkillsController],
+  exports: [SkillsService],
 })
 export class SkillsModule {}

@@ -85,12 +85,12 @@ export class AuthService {
       sub: payload.id,
       email: payload.email,
       phone: payload.phone,
-      roles: payload.role,
+      role: payload.role,
     };
 
     const options: JwtSignOptions = {
       secret: process.env.ACCESS_SECRET,
-      expiresIn: (process.env.ACCESS_EXPIRY_TIME || 'id') as any,
+      expiresIn: (process.env.ACCESS_EXPIRY_TIME || '1d') as any,
     };
 
     const accessToken = await this.jwtService.signAsync(data, options);
@@ -98,7 +98,7 @@ export class AuthService {
     return {
       type: 'Bearer',
       access_token: accessToken,
-      expiresIn: process.env.ACCESS_EXPIRY_TIME || 'id',
+      expiresIn: process.env.ACCESS_EXPIRY_TIME || '1d',
     };
   }
 
@@ -107,7 +107,7 @@ export class AuthService {
       sub: payload.id,
       email: payload.email,
       phone: payload.phone,
-      roles: payload.role,
+      role: payload.role,
     };
 
     const options: JwtSignOptions = {

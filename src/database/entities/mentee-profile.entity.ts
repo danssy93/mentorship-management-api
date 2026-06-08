@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToOne,
+} from 'typeorm';
 import { AbstractEntity } from './base.entity';
 import { User } from './users.entity';
 import { Skill } from './skill.entity';
@@ -24,7 +31,7 @@ export class MenteeProfile extends AbstractEntity {
   occupation: string;
 
   @Column({ type: 'boolean', default: true })
-  isLookingForMentor: boolean;
+  is_looking_for_mentor: boolean;
 
   // @Column({ type: 'jsonb' })
   // preferred_schedule: { days: string[]; times: string[] };
@@ -34,5 +41,16 @@ export class MenteeProfile extends AbstractEntity {
   user: User;
 
   @ManyToMany(() => Skill, (skill) => skill.mentees, { eager: true })
-  desiredSkills: Skill[];
+  @JoinTable({ name: 'mentee_profile_skills' })
+  desired_skills: Skill[];
+
+  toPayload(): Partial<MenteeProfile> {
+    return {
+      id: this.id,
+      bio: this.bio,
+      learning_goals: this.learning_goals,
+      current_level: this.current_level,
+      is_looking_for_mentor: this.is_looking_for_mentor,
+    };
+  }
 }

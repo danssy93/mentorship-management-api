@@ -22,16 +22,16 @@ export class Skill extends AbstractEntity {
   @Column({ type: 'enum', enum: SkillCategory, default: SkillCategory.OTHER })
   category: SkillCategory;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   description?: string;
 
-  @Column()
+  @Column({ default: true })
   is_active: boolean;
 
   @ManyToMany(() => MentorProfile, (mentor) => mentor.skills)
   mentors: MentorProfile[];
 
-  @ManyToMany(() => MenteeProfile, (mentee) => mentee.desiredSkills)
+  @ManyToMany(() => MenteeProfile, (mentee) => mentee.desired_skills)
   mentees: MenteeProfile[];
 
   toPayload(): Partial<Skill> {
