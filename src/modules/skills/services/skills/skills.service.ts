@@ -38,6 +38,8 @@ export class SkillsService {
   }
 
   async findOneBy(id: string[]): Promise<Skill[]> {
+    console.log('🔍 skillIds received:', id); // ← add this
+    console.log('🔍 type:', typeof id, Array.isArray(id));
     const skills = await this.skillsRepository.find({
       where: { id: In(id), is_active: true },
     });

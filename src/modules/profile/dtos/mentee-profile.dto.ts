@@ -5,6 +5,7 @@ import {
   IsArray,
   IsEnum,
   IsOptional,
+  IsUUID,
 } from 'class-validator';
 import { ExperienceLevel, Skill } from 'src/database/entities';
 
@@ -34,19 +35,15 @@ export class CreateMenteeProfileDto {
   @IsEnum(ExperienceLevel, { each: true })
   current_level: ExperienceLevel;
 
-  @ApiProperty({
-    example: Object.values(Skill),
-    required: true,
-  })
-  @IsArray({ message: 'Skills must be an array' })
-  @IsNotEmpty({ message: 'Skills must not be empty' })
-  @IsEnum(Skill, { each: true })
-  desired_skills: string[];
-
   @ApiProperty({ example: 'Software Engineer' })
   @IsString()
   @IsOptional()
   occupation: string;
+
+  @IsArray()
+  @IsOptional()
+  @IsUUID('4', { each: true })
+  skillIds: string[];
 }
 
 export class UpdateMenteeProfileDto extends PartialType(

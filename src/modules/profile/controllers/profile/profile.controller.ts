@@ -64,17 +64,23 @@ export class ProfileController {
     @Res() res: Response,
     @CurrentUser() user: User,
   ) {
-    const { desired_skills, ...rest } = payload;
+    const { skillIds, ...rest } = payload;
     const profile = await this.profileService.createMenteeProfile(
       rest,
       user,
-      desired_skills,
+      skillIds,
     );
     return ResponseFormat.success(
       res,
       'Mentee profile successfully created',
       profile,
     );
+  }
+
+  @Get('mentors')
+  async listMentors(@Query() filters: ListMentorsDto, @Res() res: Response) {
+    const profile = await this.profileService.listMentors(filters);
+    return ResponseFormat.success(res, 'Mentors fetched successfully', profile);
   }
 
   @Get('me')
@@ -107,11 +113,5 @@ export class ProfileController {
   ) {
     const profile = await this.profileService.updateProfile(user, payload);
     return ResponseFormat.success(res, 'Profile updated successfully', profile);
-  }
-
-  @Get('mentors')
-  async listMentors(@Query() filters: ListMentorsDto, @Res() res: Response) {
-    const profile = await this.profileService.listMentors(filters);
-    return ResponseFormat.success(res, 'Mentors fetched successfully', profile);
   }
 }

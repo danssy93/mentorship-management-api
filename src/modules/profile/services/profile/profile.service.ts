@@ -114,17 +114,22 @@ export class ProfileService {
   async getProfileById(
     userId: string,
   ): Promise<Partial<MentorProfile | MenteeProfile>> {
+    console.log('🔍 looking for profile with userId:', userId);
+
     const mentorProfile = await this.mentorRepository.findOne(
       { user: { id: userId } },
       { relations: { skills: true } },
     );
 
+    console.log('🔍 mentorProfile:', mentorProfile);
     if (mentorProfile) return mentorProfile.toPayload();
 
     const menteeProfile = await this.menteeRepository.findOne(
       { user: { id: userId } },
       { relations: { desired_skills: true } },
     );
+
+    console.log('🔍 menteeProfile:', menteeProfile);
 
     if (menteeProfile) return menteeProfile.toPayload();
     throw new AppError('Profile not found', HttpStatus.NOT_FOUND);
@@ -143,11 +148,27 @@ export class ProfileService {
         throw new AppError('Profile not found', HttpStatus.NOT_FOUND);
       }
 
-      const update = await this.mentorRepository.update(
-        { user: { id: user.id } },
-        payload,
-      );
-      return update.toPayload();
+      const { skillIds, ...rest } = payload as UpdateMentorProfileDto;
+      if (skillIds?.length) {
+        const skills: Skill[] = await this.skillsRepository.findOneBy(skillIds);
+        profile.skills = skills;
+        await this.mentorRepository.save(profile);
+      }
+
+      if (Object.keys(rest).length) {
+        await this.mentorRepository.update(
+          { user: { id: user.id } },
+          rest as any,
+        );
+      }
+
+      const updated = await this.mentorRepository.findOne({
+        user: { id: user.id },
+      });
+      if (!updated)
+        throw new AppError('Profile not found', HttpStatus.NOT_FOUND);
+
+      return updated.toPayload();
     }
 
     if (user.role === UserRole.MENTEE) {
@@ -159,11 +180,26 @@ export class ProfileService {
         throw new AppError('Profile not found', HttpStatus.NOT_FOUND);
       }
 
-      const update = await this.menteeRepository.update(
-        { user: { id: user.id } },
-        payload,
-      );
-      return update.toPayload();
+      const { skillIds, ...rest } = payload as UpdateMenteeProfileDto;
+      if (skillIds?.length) {
+        const skills: Skill[] = await this.skillsRepository.findOneBy(skillIds);
+        profile.desired_skills = skills;
+        await this.menteeRepository.save(profile);
+      }
+
+      if (Object.keys(rest).length) {
+        await this.menteeRepository.update(
+          { user: { id: user.id } },
+          rest as any,
+        );
+      }
+
+      const updated = await this.menteeRepository.findOne({
+        user: { id: user.id },
+      });
+      if (!updated)
+        throw new AppError('Profile not found', HttpStatus.NOT_FOUND);
+      return updated.toPayload();
     }
 
     throw new AppError('Admin do no have a profile', HttpStatus.BAD_REQUEST);

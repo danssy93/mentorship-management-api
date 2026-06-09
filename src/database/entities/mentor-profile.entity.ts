@@ -18,7 +18,7 @@ export class MentorProfile extends AbstractEntity {
   @Column({ default: 0 })
   years_of_experience: number;
 
-  @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   session_rate: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
