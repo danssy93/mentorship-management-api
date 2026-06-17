@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { UserRepository } from 'src/database/repositories';
+
 import { User } from 'src/database/entities';
 import { GenericObjectType } from 'src/common/interfaces';
 import { FindOptionsWhere, QueryRunner } from 'typeorm';
+
+import { UserRepository } from 'src/database/repositories';
 import AppError from 'src/common/errors/AppError';
 
 @Injectable()
@@ -14,12 +16,12 @@ export class UserService {
   async create(user: Partial<User>): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       email: user.email,
-      phone: user.phone
-    })
+      phone: user.phone,
+    });
     if (existingUser) {
       throw new AppError('User already exists', HttpStatus.CONFLICT);
     }
-    
+
     return await this.userRepository.create(user);
   }
 

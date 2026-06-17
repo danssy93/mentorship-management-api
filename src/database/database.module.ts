@@ -1,7 +1,16 @@
 import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './datasources';
-import { MenteeProfile, MentorProfile, Skill, User } from './entities';
+import {
+  Feedback,
+  MatchRequest,
+  MenteeProfile,
+  MentorProfile,
+  Notification,
+  Session,
+  Skill,
+  User,
+} from './entities';
 
 @Module({
   imports: [
@@ -27,6 +36,10 @@ export class DatabaseModule {
       Skill,
       MentorProfile,
       MenteeProfile,
+      MatchRequest,
+      Session,
+      Feedback,
+      Notification,
     ]);
   }
 }

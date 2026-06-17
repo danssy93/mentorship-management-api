@@ -28,6 +28,7 @@ import { RoleGuard } from 'src/common/guards/role.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { UUID } from 'crypto';
 import { ListMentorsDto } from '../../dtos/list-mentors.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('profile')
 export class ProfileController {
@@ -36,6 +37,7 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Post('mentor')
+  @ApiBearerAuth('JWT')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.MENTOR)
   async createMentorProfile(
@@ -57,6 +59,7 @@ export class ProfileController {
   }
 
   @Post('mentee')
+  @ApiBearerAuth('JWT')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.MENTEE)
   async createMenteeProfile(
@@ -84,6 +87,7 @@ export class ProfileController {
   }
 
   @Get('me')
+  @ApiBearerAuth('JWT')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Res() res: Response, @CurrentUser() user: User) {
     const profile = await this.profileService.getMyProfile(user);
@@ -105,6 +109,7 @@ export class ProfileController {
   }
 
   @Patch('me')
+  @ApiBearerAuth('JWT')
   @UseGuards(JwtAuthGuard)
   async updateProfile(
     @Body() payload: UpdateMentorProfileDto | UpdateMenteeProfileDto,

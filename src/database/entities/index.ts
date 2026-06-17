@@ -3,3 +3,7 @@ export * from './users.entity';
 export * from './mentor-profile.entity';
 export * from './mentee-profile.entity';
 export * from './skill.entity';
+export * from './match-request.entity';
+export * from './session.entity';
+export * from './feedback.entity';
+export * from './notification.entity';
