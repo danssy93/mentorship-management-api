@@ -4,9 +4,10 @@ import { MatchService } from './services/match/match.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { MatchRepository } from 'src/database/repositories';
 import { UserModule } from '../user/user.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature(), UserModule],
+  imports: [DatabaseModule.forFeature(), UserModule, NotificationModule],
   controllers: [MatchController],
   providers: [MatchService, MatchRepository],
   exports: [MatchService],

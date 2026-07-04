@@ -22,7 +22,9 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth/jwt-auth.guard';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { CurrentUser } from 'src/common/guards/current-user.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
 @Controller('match')
 export class MatchController {
   private readonly logger = new Logger(MatchController.name);

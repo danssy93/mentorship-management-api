@@ -6,3 +6,4 @@ export const MATCHREQUEST = 'match-request';
 export const SESSION = 'session';
 export const FEEDBACK = 'feedback';
 export const NOTIFICATION = 'notification';
+export const PROGRESS = 'progress';

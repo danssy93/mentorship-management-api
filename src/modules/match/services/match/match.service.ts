@@ -3,17 +3,20 @@ import { MatchRepository } from 'src/database/repositories';
 import {
   MatchRequest,
   MatchRequestStatus,
+  NotificationType,
   User,
   UserRole,
 } from 'src/database/entities';
 import AppError from 'src/common/errors/AppError';
 import { UserService } from 'src/modules/user/services/user.service';
+import { NotificationService } from 'src/modules/notification/services/notification/notification.service';
 
 @Injectable()
 export class MatchService {
   constructor(
     private readonly matchRepository: MatchRepository,
     private readonly userRepository: UserService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async sendRequest(
@@ -53,6 +56,15 @@ export class MatchService {
       mentee: user,
       status: MatchRequestStatus.PENDING,
     });
+
+    await this.notificationService.createNotification(
+      existingMentor,
+      'New Match Request',
+      `${user.first_name} wants you as a mentor`,
+      NotificationType.MATCH_REQUEST,
+      { matchRequestId: match.id },
+    );
+
     return match.toPayload();
   }
 
@@ -64,11 +76,14 @@ export class MatchService {
       );
     }
 
-    const request = await this.matchRepository.findOne({
-      id: requestId,
-      mentor: { id: user.id },
-      status: MatchRequestStatus.PENDING,
-    });
+    const request = await this.matchRepository.findOne(
+      {
+        id: requestId,
+        mentor: { id: user.id },
+        status: MatchRequestStatus.PENDING,
+      },
+      { relations: { mentee: true } },
+    );
 
     if (!request) {
       throw new AppError('No pending request found', HttpStatus.NOT_FOUND);
@@ -89,6 +104,14 @@ export class MatchService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.notificationService.createNotification(
+      request.mentee,
+      'Match Request Accepted',
+      `${user.first_name} has accepted your request `,
+      NotificationType.MATCH_REQUEST,
+      { matchRequestId: request.id },
+    );
     return updatedRequest.toPayload();
   }
 
@@ -104,11 +127,14 @@ export class MatchService {
       );
     }
 
-    const request = await this.matchRepository.findOne({
-      id: requestId,
-      mentor: { id: user.id },
-      status: MatchRequestStatus.PENDING,
-    });
+    const request = await this.matchRepository.findOne(
+      {
+        id: requestId,
+        mentor: { id: user.id },
+        status: MatchRequestStatus.PENDING,
+      },
+      { relations: { mentee: true } },
+    );
 
     if (!request) {
       throw new AppError('No pending request found', HttpStatus.NOT_FOUND);
@@ -132,6 +158,14 @@ export class MatchService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.notificationService.createNotification(
+      request.mentee,
+      'Match Request Rejected',
+      `${user.first_name} has rejected your request`,
+      NotificationType.MATCH_REQUEST,
+    );
+
     return updateRequest.toPayload();
   }
 

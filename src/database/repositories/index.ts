@@ -6,3 +6,4 @@ export * from './skills.repository';
 export * from './session.repository';
 export * from './feedback.repository';
 export * from './notification.repository';
+export * from './progress.repositository';

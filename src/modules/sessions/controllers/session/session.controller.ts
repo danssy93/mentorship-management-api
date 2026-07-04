@@ -22,7 +22,9 @@ import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth/jwt-auth.guard';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
 @Controller('session')
 export class SessionController {
   private readonly logger = new Logger(SessionController.name);

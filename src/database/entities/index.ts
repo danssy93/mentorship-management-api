@@ -7,3 +7,4 @@ export * from './match-request.entity';
 export * from './session.entity';
 export * from './feedback.entity';
 export * from './notification.entity';
+export * from './progress.entity';

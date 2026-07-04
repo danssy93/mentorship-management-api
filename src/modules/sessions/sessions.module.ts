@@ -5,9 +5,15 @@ import { DatabaseModule } from 'src/database/database.module';
 import { UserModule } from '../user/user.module';
 import { MatchModule } from '../match/match.module';
 import { MatchRepository, SessionRepository } from 'src/database/repositories';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature(), UserModule, MatchModule],
+  imports: [
+    DatabaseModule.forFeature(),
+    UserModule,
+    MatchModule,
+    NotificationModule,
+  ],
   controllers: [SessionController],
   providers: [SessionService, SessionRepository, MatchRepository],
   exports: [SessionRepository],

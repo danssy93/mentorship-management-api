@@ -6,17 +6,20 @@ import {
 import { CreateFeedbackDto } from '../../dtos/creatFeedback.dto';
 import {
   FeedbackRole,
+  NotificationType,
   SessionStatus,
   User,
   UserRole,
 } from 'src/database/entities';
 import AppError from 'src/common/errors/AppError';
+import { NotificationService } from 'src/modules/notification/services/notification/notification.service';
 
 @Injectable()
 export class FeedbackService {
   constructor(
     private readonly feedbackRepository: FeedbackRepository,
     private readonly sessionRepository: SessionRepository,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createFeedback(payload: CreateFeedbackDto, user: User) {
@@ -54,6 +57,14 @@ export class FeedbackService {
         role: FeedbackRole.MENTOR_TO_MENTEE,
       });
 
+      await this.notificationService.createNotification(
+        existingSession.mentee,
+        'Feedback Created',
+        `${user.first_name} has created feedback on your session`,
+        NotificationType.FEEDBACK_RECEIVED,
+        { feedbackId: feedback.id },
+      );
+
       return feedback.toPayload();
     }
 
@@ -90,6 +101,15 @@ export class FeedbackService {
         session: existingSession,
         role: FeedbackRole.MENTEE_TO_MENTOR,
       });
+
+      await this.notificationService.createNotification(
+        existingSession.mentor,
+        'Feedback Created',
+        `${user.first_name} has created feedback on your session`,
+        NotificationType.FEEDBACK_RECEIVED,
+        { feedbackId: feedback.id },
+      );
+
       return feedback.toPayload();
     }
     throw new AppError('Admin cannot leave feedback', HttpStatus.FORBIDDEN);

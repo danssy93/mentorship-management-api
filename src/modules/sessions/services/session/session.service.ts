@@ -2,18 +2,19 @@ import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import AppError from 'src/common/errors/AppError';
 import {
   MatchRequestStatus,
+  NotificationType,
   Session,
   SessionStatus,
   User,
   UserRole,
 } from 'src/database/entities';
 import { MatchRepository, SessionRepository } from 'src/database/repositories';
-import { MatchService } from 'src/modules/match/services/match/match.service';
 import {
   CancelSessionDto,
   CreateSessionDto,
   UpdateSessionDto,
 } from '../../dtos/createSession.dto';
+import { NotificationService } from 'src/modules/notification/services/notification/notification.service';
 
 @Injectable()
 export class SessionService {
@@ -22,6 +23,7 @@ export class SessionService {
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly matchRepository: MatchRepository,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createSession(
@@ -66,6 +68,14 @@ export class SessionService {
       status: SessionStatus.SCHEDULED,
     });
 
+    await this.notificationService.createNotification(
+      matchRequest.mentee,
+      'New Session Scheduled',
+      `${user.first_name} has scheduled a new session`,
+      NotificationType.SESSION_SCHEDULED,
+      { sessionId: session.id },
+    );
+
     return session.toPayload();
   }
 
@@ -79,7 +89,7 @@ export class SessionService {
         order: { scheduled_at: 'DESC' },
       });
 
-      if (!session) {
+      if (!session.length) {
         throw new AppError('Session not found', HttpStatus.NOT_FOUND);
       }
       return session.map((s) => s.toPayload());
@@ -94,7 +104,7 @@ export class SessionService {
         order: { scheduled_at: 'DESC' },
       });
 
-      if (!session) {
+      if (!session.length) {
         throw new AppError('Session not found', HttpStatus.NOT_FOUND);
       }
       return session.map((s) => s.toPayload());
@@ -177,11 +187,14 @@ export class SessionService {
     sessionId: string,
   ) {
     if (user.role === UserRole.MENTOR) {
-      const session = await this.sessionRepository.findOne({
-        id: sessionId,
-        mentor: { id: user.id },
-        status: SessionStatus.SCHEDULED,
-      });
+      const session = await this.sessionRepository.findOne(
+        {
+          id: sessionId,
+          mentor: { id: user.id },
+          status: SessionStatus.SCHEDULED,
+        },
+        { relations: { mentee: true } },
+      );
 
       if (!session) {
         throw new AppError('No active session schedule', HttpStatus.NOT_FOUND);
@@ -207,15 +220,27 @@ export class SessionService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
+
+      await this.notificationService.createNotification(
+        session.mentee,
+        'Session Scheduled Canceled',
+        `${user.first_name} has canceled your scheduled session`,
+        NotificationType.SESSION_CANCELLED,
+        { sessionId: session.id },
+      );
+
       return cancelSession.toPayload();
     }
 
     if (user.role === UserRole.MENTEE) {
-      const session = await this.sessionRepository.findOne({
-        id: sessionId,
-        mentee: { id: user.id },
-        status: SessionStatus.SCHEDULED,
-      });
+      const session = await this.sessionRepository.findOne(
+        {
+          id: sessionId,
+          mentee: { id: user.id },
+          status: SessionStatus.SCHEDULED,
+        },
+        { relations: { mentor: true } },
+      );
 
       if (!session) {
         throw new AppError('No active session schedule', HttpStatus.NOT_FOUND);
@@ -240,6 +265,14 @@ export class SessionService {
         );
       }
 
+      await this.notificationService.createNotification(
+        session.mentor,
+        'Session Scheduled Canceled',
+        `${user.first_name} has canceled your scheduled session`,
+        NotificationType.SESSION_CANCELLED,
+        { sessionId: session.id },
+      );
+
       return cancelSession.toPayload();
     }
     throw new AppError(
@@ -256,11 +289,14 @@ export class SessionService {
       );
     }
 
-    const session = await this.sessionRepository.findOne({
-      id: sessionId,
-      mentor: { id: user.id },
-      status: SessionStatus.ONGOING,
-    });
+    const session = await this.sessionRepository.findOne(
+      {
+        id: sessionId,
+        mentor: { id: user.id },
+        status: SessionStatus.ONGOING,
+      },
+      { relations: { mentee: true } },
+    );
 
     if (!session) {
       throw new AppError('No ongoing session', HttpStatus.NOT_FOUND);
@@ -281,6 +317,14 @@ export class SessionService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.notificationService.createNotification(
+      session.mentee,
+      'Session Completed',
+      `Your session with ${user.first_name} has been completed`,
+      NotificationType.SESSION_COMPLETED,
+      { sessionId: session.id },
+    );
 
     return completeSession.toPayload();
   }

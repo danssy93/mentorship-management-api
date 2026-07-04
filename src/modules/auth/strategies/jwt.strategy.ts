@@ -18,8 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: IJwtDecodedToken) {
+    console.log('🔍 JWT PAYLOAD:', payload);
     const user = await this.authService.validateUser(payload.sub);
 
+    console.log('🔍 USER FROM VALIDATE:', user);
     if (!user || !user.is_active) {
       throw new AppError('Unauthorized', HttpStatus.UNAUTHORIZED);
     }

@@ -4,9 +4,10 @@ import { FeedbackService } from './services/feedback/feedback.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { SessionsModule } from '../sessions/sessions.module';
 import { FeedbackRepository } from 'src/database/repositories';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [DatabaseModule.forFeature(), SessionsModule],
+  imports: [DatabaseModule.forFeature(), SessionsModule, NotificationModule],
   controllers: [FeedbackController],
   providers: [FeedbackService, FeedbackRepository],
 })

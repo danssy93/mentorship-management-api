@@ -4,10 +4,12 @@ import { User } from './users.entity';
 
 export enum NotificationType {
   MATCH_REQUEST = 'match_request',
+  MATCH_ACCEPTED = 'match_accepted',
   SESSION_SCHEDULED = 'session_scheduled',
   SESSION_CANCELLED = 'session_cancelled',
   FEEDBACK_RECEIVED = 'feedback_received',
   SESSION_COMPLETED = 'session_completed',
+  GOAL_COMPLETED = 'goal_completed',
 }
 
 @Entity('notification')

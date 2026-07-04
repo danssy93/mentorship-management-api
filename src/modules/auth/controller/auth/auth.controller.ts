@@ -88,7 +88,7 @@ export class AuthController {
   @ApiBadRequestResponse({
     description: 'Validation failed or required parameters missing.',
   })
-  @ApiBearerAuth('JWT')
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@CurrentUser() user: User, @Res() res: Response) {

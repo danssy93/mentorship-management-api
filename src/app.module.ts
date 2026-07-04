@@ -13,6 +13,7 @@ import { CronJobModule } from './modules/cron-job/cron-job.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ProgressModule } from './modules/progress/progress.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     CronJobModule,
     FeedbackModule,
     NotificationModule,
+    ProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

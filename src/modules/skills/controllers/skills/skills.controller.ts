@@ -25,7 +25,7 @@ export class SkillsController {
   private readonly logger = new Logger(SkillsController.name);
   constructor(private readonly skillsService: SkillsService) {}
 
-  @ApiBearerAuth('JWT')
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @Post('create')

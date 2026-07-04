@@ -7,6 +7,7 @@ import {
   MenteeProfile,
   MentorProfile,
   Notification,
+  Progress,
   Session,
   Skill,
   User,
@@ -40,6 +41,7 @@ export class DatabaseModule {
       Session,
       Feedback,
       Notification,
+      Progress,
     ]);
   }
 }
