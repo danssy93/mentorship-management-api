@@ -18,7 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed:skill": "ts-node -r tsconfig-paths/register src/database/seeder/run-seed.ts seed-up"
+    "seed:skill": "ts-node -r tsconfig-paths/register src/database/seeder/run-seed.ts seed-up",
+    "typeorm": "typeorm-ts-node-commonjs --dataSource src/database/datasource.ts",
+    "migration:generate": "dotenv -e .env.local -- npx typeorm-ts-node-commonjs migration:generate src/database/migrations/InitialMigration --dataSource src/database/datasources.ts",
+    "migration:run": "dotenv -e .env.local -- npx typeorm-ts-node-commonjs migration:run --dataSource src/database/datasources.ts",
+    "migration:revert": "dotenv -e .env.local -- npx typeorm-ts-node-commonjs migration:revert --dataSource src/database/datasources.ts",
+    "migration:show": "dotenv -e .env.local -- npx typeorm-ts-node-commonjs migration:show --dataSource src/database/datasources.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -42,7 +47,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^1.0.0",
+    "typeorm": "^0.3.20",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
@@ -56,6 +61,7 @@
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^11.0.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -69,7 +75,8 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.20.0",
+    "yargs": "^17.7.2"
   },
   "jest": {
     "moduleFileExtensions": [
