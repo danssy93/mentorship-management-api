@@ -42,8 +42,8 @@ export class ProfileController {
   @Roles(UserRole.MENTOR)
   async createMentorProfile(
     @Body() payload: CreateMentorProfileDto,
-    @Res() res: Response,
     @CurrentUser() user: User,
+    @Res() res: Response,
   ) {
     const { skillIds, ...rest } = payload;
     const profile = await this.profileService.createMentorProfile(
@@ -64,8 +64,8 @@ export class ProfileController {
   @Roles(UserRole.MENTEE)
   async createMenteeProfile(
     @Body() payload: CreateMenteeProfileDto,
-    @Res() res: Response,
     @CurrentUser() user: User,
+    @Res() res: Response,
   ) {
     const { skillIds, ...rest } = payload;
     const profile = await this.profileService.createMenteeProfile(
@@ -99,7 +99,7 @@ export class ProfileController {
   }
 
   @Get(':id')
-  async getProfileById(@Res() res: Response, @Param('id') id: string) {
+  async getProfileById(@Param('id') id: string, @Res() res: Response) {
     const profile = await this.profileService.getProfileById(id);
     return ResponseFormat.success(
       res,
@@ -113,8 +113,8 @@ export class ProfileController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(
     @Body() payload: UpdateMentorProfileDto | UpdateMenteeProfileDto,
-    @Res() res: Response,
     @CurrentUser() user: User,
+    @Res() res: Response,
   ) {
     const profile = await this.profileService.updateProfile(user, payload);
     return ResponseFormat.success(res, 'Profile updated successfully', profile);

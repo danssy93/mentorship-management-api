@@ -1,61 +1,102 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from '../services/user.service';
+import { UserRole } from 'src/database/entities/users.entity';
+
+const mockUser = {
+  id: 'uuid-123',
+  first_name: 'Tobs',
+  last_name: 'Dan',
+  email: 'tobs@gmail.com',
+  phone: '2348104075057',
+  role: UserRole.MENTOR,
+  is_active: true,
+  created_at: new Date(),
+  updated_at: new Date(),
+};
+
+const mockUserService = {
+  create: jest.fn(),
+  findOneBy: jest.fn(),
+};
 
 describe('UserController', () => {
-  let controller: UserController;
-
-  const res = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-  } as any;
-
-  const MockUserService = {
-    create: jest.fn().mockResolvedValue({
-      id: 1,
-      first_name: 'Tobs',
-      last_name: 'Dan',
-      phone: '08104075057',
-      email: 'dan@gmail.com',
-      role: ['admin'],
-    }),
-  };
+  let userController: UserController;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [
         {
           provide: UserService,
-          useValue: MockUserService,
-          res,
+          useValue: mockUserService,
         },
       ],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    userController = module.get<UserController>(UserController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should create a user', async () => {
-    const result = await controller.createUser({
-      first_name: 'Tobs',
-      last_name: 'Dan',
-      phone: '08104075057',
-      email: 'dan@gmail.com',
-      role: ['admin'],
+  describe('findOneBy', () => {
+    it('should return a user when found', async () => {
+      mockUserService.findOneBy.mockResolvedValue(mockUser);
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      await userController.getUserByRole(UserRole.MENTOR, res as any);
+
+      expect(mockUserService.findOneBy).toHaveBeenCalledWith({
+        role: UserRole.MENTOR,
+      });
+
+      expect(res.status).toHaveBeenCalled();
+
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'User fetched successfully',
+          data: mockUser,
+        }),
+      );
     });
+  });
 
-    expect(result).toEqual({
-      id: expect.any,
-      first_name: 'Tobs',
-      last_name: 'Dan',
-      phone: '08104075057',
-      email: 'dan@gmail.com',
-      role: ['admin'],
+  describe('create', () => {
+    it('should create a new user successfully', async () => {
+      mockUserService.create.mockResolvedValue(mockUser);
+
+      const createDto = {
+        first_name: 'Tobs',
+        last_name: 'Dan',
+        email: 'tobs@gmail.com',
+        phone: '2348104075057',
+        password: 'password123',
+        role: UserRole.MENTOR,
+      };
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      await userController.createUser(createDto, res as any);
+
+      expect(mockUserService.create).toHaveBeenCalledWith(createDto);
+      expect(res.status).toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'User created successfully',
+          data: mockUser,
+        }),
+      );
     });
   });
 });

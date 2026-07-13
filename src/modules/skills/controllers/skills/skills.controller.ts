@@ -31,11 +31,11 @@ export class SkillsController {
   @Post('create')
   async createSkills(
     @Body() payload: SkillsDto,
-    @Res() res: Response,
     @CurrentUser() user: User,
+    @Res() res: Response,
   ) {
     const skill = await this.skillsService.create(payload, user);
-    return ResponseFormat.success(res, 'skills created successful', skill);
+    return ResponseFormat.success(res, 'skill created successfully', skill);
   }
 
   @Get()
@@ -50,6 +50,6 @@ export class SkillsController {
   @Post('by-ids')
   async getSkillsByIds(@Body('ids') ids: string[], @Res() res: Response) {
     const skills = await this.skillsService.findOneBy(ids);
-    return ResponseFormat.success(res, 'skills retrieved successfully', skills);
+    return ResponseFormat.success(res, 'skill retrieved successfully', skills);
   }
 }
